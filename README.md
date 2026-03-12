@@ -157,7 +157,7 @@ Integrity Check Passed ✔
 
 # 👨‍💻 Author
 
-Dev
+Devopam Pal
 BTech Computer Science Student
 
 ## ⭐ If you like this project
