@@ -555,7 +555,7 @@ The reliability mechanisms implemented in SwiftSend add the following overheads:
 
 The graph below shows real-time transfer speed during a 10 MB file download, with retransmission dips clearly visible:
 
-![Transfer Speed Over Time — showing instantaneous speed, rolling average, and retransmission dips](C:/Users/Admin/.gemini/antigravity/brain/fc23fb51-60fb-4ded-bbe2-bd6c4d8dc197/transfer_speed_over_time.png)
+![Transfer Speed Over Time — showing instantaneous speed, rolling average, and retransmission dips](graphs/transfer_speed_over_time.png)
 
 **Reading the graph:**
 - The **cyan spikes** are the instantaneous speed of each individual packet — they jump around because each packet arrives at a slightly different interval.
@@ -589,7 +589,7 @@ Send Packets 0–19 → Collect ACKs → Slide window → Send Packets 20–39 �
 
 The following graph compares throughput across all protocol stages, from Stop-and-Wait (Stage 1) to the final Sliding Window implementation (Stage 5+):
 
-![Throughput Comparison — Stop-and-Wait vs Sliding Window with increasing window sizes and the raw UDP reference line](C:/Users/Admin/.gemini/antigravity/brain/fc23fb51-60fb-4ded-bbe2-bd6c4d8dc197/stop_wait_vs_sliding_window.png)
+![Throughput Comparison — Stop-and-Wait vs Sliding Window with increasing window sizes and the raw UDP reference line](graphs/stop_wait_vs_sliding_window.png)
 
 **Reading the graph:**
 - Each bar represents a different protocol stage from the project's development.
@@ -640,7 +640,7 @@ The multi_client_generator.py utility enables testing with N concurrent clients 
 
 The following graph shows per-client and total server throughput as the number of concurrent clients increases:
 
-![Multi-Client Performance — Per-Client throughput decreases while total server throughput increases and saturates](C:/Users/Admin/.gemini/antigravity/brain/fc23fb51-60fb-4ded-bbe2-bd6c4d8dc197/multi_client_throughput.png)
+![Multi-Client Performance — Per-Client throughput decreases while total server throughput increases and saturates](graphs/multi_client_throughput.png)
 
 **Reading the graph:**
 - **Cyan line (left Y-axis):** Per-client throughput — how fast each individual client downloads. With 1 client it's ~42 MB/s, but with 10 clients each one only gets ~9 MB/s. This is expected — the server's CPU is shared between threads.
