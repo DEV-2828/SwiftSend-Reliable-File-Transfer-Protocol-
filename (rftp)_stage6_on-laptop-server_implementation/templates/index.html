@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Web Client - Reliable UDP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-dark text-light p-5">
+    <div class="container" style="max-width: 600px;">
+        <h2 class="mb-4">Reliable File Downloader</h2>
+
+        <div class="input-group mb-4">
+            <select id="filename" class="form-select">
+                <option value="" disabled selected>Loading available files...</option>
+            </select>
+            <button id="btn-download" class="btn btn-primary" onclick="startDownload()" disabled>Download</button>
+        </div>
+
+        <div class="card bg-secondary mb-3">
+            <div class="card-body">
+                <h5 class="card-title" id="status-text">Idle</h5>
+                <p class="card-text text-info" id="message-text">Waiting to start...</p>
+
+                <div class="progress mb-3" style="height: 25px;">
+                    <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+                        role="progressbar" style="width: 0%;">0%</div>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <span id="speed-text">Speed: 0.00 MB/s</span>
+                    <span id="bytes-text">0 / 0 bytes</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button id="btn-pause" class="btn btn-warning w-50" onclick="pause()" disabled>Pause</button>
+            <button id="btn-resume" class="btn btn-success w-50" onclick="resume()" disabled>Resume</button>
+        </div>
+    </div>
+
+    <script>
+        // Fetch available files as soon as the page loads
+        document.addEventListener("DOMContentLoaded", () => {
+            fetch('/files')
+                .then(response => response.json())
+                .then(data => {
+                    const select = document.getElementById('filename');
+                    select.innerHTML = ''; // Clear the "Loading..." text
+                    
+                    if (data.files.length === 0) {
+                        select.innerHTML = '<option value="" disabled selected>No files found on server</option>';
+                        return;
+                    }
+
+                    // Populate the dropdown with the files
+                    data.files.forEach(file => {
+                        const option = document.createElement('option');
+                        option.value = file;
+                        option.textContent = file;
+                        select.appendChild(option);
+                    });
+                    
+                    // Unlock the download button
+                    document.getElementById('btn-download').disabled = false;
+                })
+                .catch(err => {
+                    document.getElementById('filename').innerHTML = '<option value="" disabled selected>Error connecting to server</option>';
+                });
+        });
+
+        // Start downloading
+        function startDownload() {
+            const filename = document.getElementById('filename').value;
+            fetch('/start', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filename: filename })
+            });
+            document.getElementById('btn-pause').disabled = false;
+        }
+
+        // Pause / Resume functions
+        function pause() { fetch('/pause', { method: 'POST' }); }
+        function resume() { fetch('/resume', { method: 'POST' }); }
+
+        // Poll the server every 500ms to update the UI
+        setInterval(() => {
+            fetch('/status')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('progress-bar').style.width = data.progress + '%';
+                    document.getElementById('progress-bar').innerText = data.progress + '%';
+                    document.getElementById('speed-text').innerText = `Speed: ${data.speed.toFixed(2)} MB/s`;
+                    document.getElementById('bytes-text').innerText = `${data.completed_bytes} / ${data.total_bytes} bytes`;
+                    document.getElementById('status-text').innerText = `Status: ${data.status.toUpperCase()}`;
+                    document.getElementById('message-text').innerText = data.message;
+
+                    // Toggle button states based on status
+                    if (data.status === 'downloading') {
+                        document.getElementById('btn-pause').disabled = false;
+                        document.getElementById('btn-resume').disabled = true;
+                    } else if (data.status === 'paused') {
+                        document.getElementById('btn-pause').disabled = true;
+                        document.getElementById('btn-resume').disabled = false;
+                    } else if (data.status === 'finished' || data.status === 'error') {
+                        document.getElementById('btn-pause').disabled = true;
+                        document.getElementById('btn-resume').disabled = true;
+                    }
+                });
+        }, 500);
+    </script>
+</body>
+
+</html>

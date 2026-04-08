@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# User directories
+downloads/
+files/
+multiple_downloads/
+
+# Other
+.DS_Store
+.vscode/

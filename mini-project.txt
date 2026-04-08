@@ -1,0 +1,14 @@
+	Reliable File Transfer Protocol (Custom FTP)	
+
+Design a: reliable and 
+    resumable file transfer system.	
+    Chunk-based transfer;               ---- segmented to desirable-sized chunks
+    Resume interrupted transfers; 
+    Integrity checking;                 ---- sha-256 or checksum
+    Throughput optimization	            ---- by using sliding windows??
+
+UDP	
+
+C, 
+C++, 
+Python
